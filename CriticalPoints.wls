@@ -31,6 +31,15 @@ qnmsReIm = QNMsCToReIm[qnms]
 rewImwPlot = RewImwPlot[qnms];
 ShowPlot@rewImwPlot;
 
+rekRewPlot = RekRewPlot[qnms];
+ShowPlot@rekRewPlot;
+
+rekImwPlot = RekImwPlot[qnms];
+ShowPlot@rekImwPlot;
+
+
+
+
 
 
 
