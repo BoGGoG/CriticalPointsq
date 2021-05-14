@@ -11,6 +11,7 @@ $Path=Once[Append[$Path,sourcePath]];
 Get[FileNameJoin[{sourcePath, "VIMHelper.wl"}]];
 
 Get[FileNameJoin[{sourcePath, "CriticalPointsCalculator.wl"}]];
+Get["Plotter.wl"];
 
 Setup[]
 
@@ -20,15 +21,16 @@ sols = SolvePerturbatively[maxOrder];
 qnms = CalcQNMs[{sols, maxOrder}, 0.4,0];
 
 kIn = {0, 1/2, 1, 3/2, 2};
-wIn = {0};
+mIn = {0};
 
-qnms = CalcQNMs[{sols, maxOrder}, kIn, wIn, 
+qnms = CalcQNMs[{sols, maxOrder}, kIn, mIn, 
     "Parallel" -> True];
 
 qnmsReIm = QNMsCToReIm[qnms] 
 
-p1 = ListPlot[Table[qnmsReIm[[i,3]], {i,1,3}]];
-ShowPlot@p1
+rewImwPlot = RewImwPlot[qnms];
+ShowPlot@rewImwPlot;
+
 
 
 
