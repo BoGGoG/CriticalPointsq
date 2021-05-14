@@ -19,14 +19,19 @@ sols = SolvePerturbatively[maxOrder];
 
 qnms = CalcQNMs[{sols, maxOrder}, 0.4,0];
 
-qnms = CalcQNMs[{sols, maxOrder}, {0, 0.5, 1.0},{0, 0.1}]
+kIn = {0, 1/2, 1, 3/2, 2};
+wIn = {0};
 
-qnms[[1]]//N
+qnms = CalcQNMs[{sols, maxOrder}, kIn, wIn, 
+    "Parallel" -> True];
 
-qnms[[2]]//N
+qnmsReIm = QNMsCToReIm[qnms] 
 
-qnmsReIm = Map[{Re[#],Im[#]}&, qnms];
-ShowPlot@ListPlot[qnmsReIm]
+p1 = ListPlot[Table[qnmsReIm[[i,3]], {i,1,3}]];
+ShowPlot@p1
+
+
+
 
 
 

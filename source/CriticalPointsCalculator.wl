@@ -43,15 +43,30 @@ SolvePerturbatively[maxOrder_:7] := Block[{eq, sol, sols, order},
     sols
 ];
 
-CalcQNMs::usage = "CalcQNMs[{sols, order}, k, m, c0:1] calculates the QNMs by solving the spectral curve.
-order needs to be the same as in sols."
+CalcQNMs::usage = "CalcQNMs[{sols, order}, k, m, c0:1] calculates the QNMs by solving the spectral curve. 
+order needs to be the same as in sols.
+Output: {k, m, qnms}
+
+Can also be called as CalcQNMs[{sols, order}, kList, mList, c0:1] to calculate the qnms for every combination of k and m in the two lists. This version als has a parallel option 'Parallel' -> True (default: False).
+Output: {{k1, m1, qnms1}, {k2, m2, qnms2}, ...}
+"
 CalcQNMs[{sols_, maxOrder_}, k_, mm_, c0_:1] := Block[{phiSol, spectralCurve, qnms},
     phiSol = phiExpansion[maxOrder][u] /. sols;
     spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify; 
-    qnms = w/.Solve[spectralCurve[w,0,0]==0,w]
+    qnms = w/.Solve[spectralCurve[w,0,0]==0,w];
+    {k, mm, qnms}
 ];
 
-CalcQNMs[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSol, spectralCurve, qnms, kmTuples, km},
+Options[CalcQNMs] = {"Parallel" -> False};
+CalcQNMs[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1, OptionsPattern[]] := Block[{},
+    If[OptionValue["Parallel"],
+        CalcQNMsParallel[{sols, maxOrder}, k, mm, c0]
+        , (*else*)
+        CalcQNMsNotParallel[{sols, maxOrder}, k, mm, c0]
+    ]
+];
+
+CalcQNMsNotParallel[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSol, spectralCurve, qnms, kmTuples, km},
     phiSol = phiExpansion[maxOrder][u] /. sols;
     spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify; 
 
@@ -65,3 +80,25 @@ CalcQNMs[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSol, spect
         }, {km, kmTuples}
     ]
 ];
+
+CalcQNMsParallel[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSol, spectralCurve, qnms, kmTuples, km},
+    phiSol = phiExpansion[maxOrder][u] /. sols;
+    spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify;
+
+    kmTuples = Tuples[{k, mm}];
+
+    ParallelTable[
+        {
+            km[[1]],
+            km[[2]],
+            w/.Solve[spectralCurve[w,km[[1]],km[[2]]]==0,w]
+        }, {km, kmTuples}
+    ]
+];
+
+
+CToReIm::messages = "CToReIm[number]: complex number -> {real part, im part}";
+CToReIm[num_] := {Re@num, Im@num};
+
+QNMsCToReIm::messages = "QNMsCToReIm[qnms] takes qnms in the format {k, m, qnm} -> {{Re k, Im k}, {Re m, Im m}, {Re w, Im w}}"
+QNMsCToReIm[qnms_] := Map[{CToReIm[#[[1]]], CToReIm[#[[2]]], Map[CToReIm,#[[3]]]} &, qnms];
