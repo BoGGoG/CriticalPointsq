@@ -36,3 +36,10 @@ SolvePerturbatively[maxOrder_:7] := Block[{eq, sol, sols, order},
 
     sols
 ];
+
+CalcQNMs[{sols_, maxOrder_}, k_, mm_, c0_:1] := Block[{phiSol, spectralCurve},
+    phiSol = phiExpansion[maxOrder][u] /. sols;
+    spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify; 
+    qnms = w/.Solve[spectralCurve[w,0,0]==0,w]
+
+];
