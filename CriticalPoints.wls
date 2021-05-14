@@ -20,6 +20,7 @@ sols = SolvePerturbatively[maxOrder];
 
 qnms = CalcQNMs[{sols, maxOrder}, 0.4,0];
 
+
 kIn = {0, 1/2, 1, 3/2, 2};
 mIn = {0};
 
@@ -38,11 +39,7 @@ rekImwPlot = RekImwPlot[qnms];
 ShowPlot@rekImwPlot;
 
 
-
-
-
-
-
+ShowPlot@ComplexListPlot[ComplexCircle[0,1,{0,2 Pi}, 50]]
 
 
 
