@@ -17,10 +17,18 @@ Setup[]
 maxOrder = 8;
 sols = SolvePerturbatively[maxOrder];
 
-qnms = CalcQNMs[{sols, maxOrder}, 0,0];
+qnms = CalcQNMs[{sols, maxOrder}, 0.4,0];
+
+qnms = CalcQNMs[{sols, maxOrder}, {0, 0.5, 1.0},{0, 0.1}]
+
+qnms[[1]]//N
+
+qnms[[2]]//N
 
 qnmsReIm = Map[{Re[#],Im[#]}&, qnms];
 ShowPlot@ListPlot[qnmsReIm]
+
+
 
 
 

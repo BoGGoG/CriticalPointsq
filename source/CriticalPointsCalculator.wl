@@ -1,5 +1,8 @@
 Print["CriticalPointsCalculator.wl loaded"];
 
+Setup::usage = "Setup[] sets the differential equation, indicial exponent and the expansion
+for the scalar field. This function should be the first thing you run after loading this file.";
+
 Setup[] := Block[{},
     phiEq = (-((1 + u^2)/(u - u^3)))*Derivative[1][phi][u] + (((m^2 + kk^2*u)*(-1 + u^2) + u*w^2)/(4*u^2*(-1 + u^2)^2))*phi[u] + 
         Derivative[2][phi][u]; 
@@ -13,6 +16,9 @@ Setup[] := Block[{},
     Print["indicialExp = ", indicialExp];
     Print["function phiExpansion[order][u] defined"];
 ];
+
+SolvePerturbatively::usage = "SolvePerturbatively[order] solves phiEq set in Setup[] up to order 7.
+The output (sols) can then be used as input for CalcQNMs."
 
 SolvePerturbatively[maxOrder_:7] := Block[{eq, sol, sols, order},
     (* first solve without plugging lower order solutions in
@@ -37,9 +43,25 @@ SolvePerturbatively[maxOrder_:7] := Block[{eq, sol, sols, order},
     sols
 ];
 
-CalcQNMs[{sols_, maxOrder_}, k_, mm_, c0_:1] := Block[{phiSol, spectralCurve},
+CalcQNMs::usage = "CalcQNMs[{sols, order}, k, m, c0:1] calculates the QNMs by solving the spectral curve.
+order needs to be the same as in sols."
+CalcQNMs[{sols_, maxOrder_}, k_, mm_, c0_:1] := Block[{phiSol, spectralCurve, qnms},
     phiSol = phiExpansion[maxOrder][u] /. sols;
     spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify; 
     qnms = w/.Solve[spectralCurve[w,0,0]==0,w]
+];
 
+CalcQNMs[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSol, spectralCurve, qnms, kmTuples, km},
+    phiSol = phiExpansion[maxOrder][u] /. sols;
+    spectralCurve[ww_, q_, mmm_] := phiSol / (-1+u)^(-((I w)/4)) /. {kk->q, w->ww, m->mmm, u->0, c[0] -> c0} // Simplify; 
+
+    kmTuples = Tuples[{k, mm}];
+
+    Table[
+        {
+            km[[1]], 
+            km[[2]], 
+            w/.Solve[spectralCurve[w,km[[1]],km[[2]]]==0,w]
+        }, {km, kmTuples}
+    ]
 ];
