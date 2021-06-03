@@ -98,7 +98,7 @@ CalcQNMsParallel[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSo
 
 
 CToReIm::messages = "CToReIm[number]: complex number -> {real part, im part}";
-CToReIm[num_] := {Re@num, Im@num};
+CToReIm = ReIm;
 
 QNMsCToReIm::messages = "QNMsCToReIm[qnms] takes qnms in the format {k, m, qnm} -> {{Re k, Im k}, {Re m, Im m}, {Re w, Im w}}"
 QNMsCToReIm[qnms_] := Map[{CToReIm[#[[1]]], CToReIm[#[[2]]], Map[CToReIm,#[[3]]]} &, qnms];
