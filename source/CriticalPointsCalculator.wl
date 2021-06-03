@@ -104,7 +104,7 @@ QNMsCToReIm::messages = "QNMsCToReIm[qnms] takes qnms in the format {k, m, qnm} 
 QNMsCToReIm[qnms_] := MapAt[CToReIm, qnms, {{All, ;; -2}, {All, -1, All}}];
 
 ComplexCircle::messages = "ComplexCircle[radius, {startAngle, endAngle}, nPoints] returns points in a circle around center.";
-ComplexCircle[center_, radius_, {startAngle_, endAngle_}, nPoints_] := Block[{},
-    angles = Subdivide[startAngle, endAngle, nPoints+1][[;;-2]];
+ComplexCircle[center_, radius_, {startAngle_, endAngle_}, nPoints_] := Module[{angles},
+    angles = Most@Subdivide[startAngle, endAngle, nPoints+1];
     Table[center + Exp[I angle], {angle, angles}]
 ];
