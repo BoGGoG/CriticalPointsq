@@ -12,7 +12,7 @@ secantRootFind::usage="secantRootFind[f, {{x_1,x_2,...}, {y_1, y_2,...}}] finds 
 Begin["`Private`"];
 (*Options for Functions*)
 rootFindingOptions = { WorkingPrecision->MachinePrecision, Tolerance->10^(-10),
-                     NormFunction-> Abs}
+                     NormFunction-> Norm}
 
 Options[secantRootFind] = rootFindingOptions;
 secantRootFind[func_, guess1_?NumericQ, guess2_?NumericQ, opts:OptionsPattern[]]:=
@@ -32,7 +32,7 @@ Module[{nextGuessFunc, nextGuess, currentGuesses, workingGuesses, steps=0,
         workingGuesses[[2]] = nextGuess;
         AppendTo[currentGuesses, nextGuess];
         
-        res=Abs@Apply[Subtract]@workingGuesses;
+        res=Norm@Apply[Subtract]@workingGuesses;
         AppendTo[reses,res];
 
         steps++;
