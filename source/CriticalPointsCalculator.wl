@@ -98,13 +98,13 @@ CalcQNMsParallel[{sols_, maxOrder_}, k_?ListQ, mm_?ListQ, c0_:1] := Block[{phiSo
 
 
 CToReIm::messages = "CToReIm[number]: complex number -> {real part, im part}";
-CToReIm[num_] := {Re@num, Im@num};
+CToReIm = ReIm;
 
 QNMsCToReIm::messages = "QNMsCToReIm[qnms] takes qnms in the format {k, m, qnm} -> {{Re k, Im k}, {Re m, Im m}, {Re w, Im w}}"
-QNMsCToReIm[qnms_] := Map[{CToReIm[#[[1]]], CToReIm[#[[2]]], Map[CToReIm,#[[3]]]} &, qnms];
+QNMsCToReIm[qnms_] := MapAt[CToReIm, qnms, {{All, ;; -2}, {All, -1, All}}];
 
 ComplexCircle::messages = "ComplexCircle[radius, {startAngle, endAngle}, nPoints] returns points in a circle around center.";
-ComplexCircle[center_, radius_, {startAngle_, endAngle_}, nPoints_] := Block[{},
-    angles = Subdivide[startAngle, endAngle, nPoints+1][[;;-2]];
+ComplexCircle[center_, radius_, {startAngle_, endAngle_}, nPoints_] := Module[{angles},
+    angles = Most@Subdivide[startAngle, endAngle, nPoints+1];
     Table[center + Exp[I angle], {angle, angles}]
 ];

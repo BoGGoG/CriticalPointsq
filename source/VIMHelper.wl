@@ -13,11 +13,16 @@ RandomFileName[length_:50, extension_:"pdf"] := Block[{name},
     name<>"."<>extension
 ];
 
-ShowPlot[plot_] := Module[{randomFileName, filePath},
+ShowPlot[plot_] := Module[{randomFileName, randomFileNum, filePath},
     (*randomFileName = RandomFileName[];*)
-    randomFileName = "wolframPlot.pdf";
-    filePath = FileNameJoin[{"/tmp",randomFileName}];
+    randomFileNum = StringJoin @@ Map[ToString]@
+        Array[RandomInteger[{0, 9}] &, {10}]
+
+    randomFileName = StringJoin["wolframPlot",randomFileNum,".pdf"];
+    filePath = FileNameJoin[{$TemporaryDirectory,randomFileName}];
     Export[filePath, plot];
+
+    Print["Opening Plot Image from " <> filePath]
     Run["open "<>filePath];
 ];
 
