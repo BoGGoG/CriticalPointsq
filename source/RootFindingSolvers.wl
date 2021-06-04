@@ -38,7 +38,7 @@ Module[{nextGuessFunc, nextGuess, currentGuesses, workingGuesses, steps=0,
         steps++;
     ];
 
-    Last[workingGuesses]
+    SetPrecision[Last[workingGuesses],-1-Log10[tol]]
 ]
 
 (*End of Package*)
