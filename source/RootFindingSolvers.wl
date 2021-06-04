@@ -27,7 +27,6 @@ Module[{nextGuessFunc, nextGuess, currentGuesses, workingGuesses, steps=0,
     res=100;
     While[res>tol && steps<100, 
         nextGuess = nextGuessFunc@@workingGuesses;
-        print(nextGuess);
         workingGuesses[[1]] = workingGuesses[[2]];
         workingGuesses[[2]] = nextGuess;
         AppendTo[currentGuesses, nextGuess];
