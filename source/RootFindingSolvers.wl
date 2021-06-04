@@ -40,6 +40,65 @@ Module[{nextGuessFunc, nextGuess, currentGuesses, workingGuesses, steps=0,
     SetPrecision[Last[workingGuesses],-1-Log10[tol]]
 ]
 
+secantRootFind[func_, guess1:{__?NumericQ}, guess2:{__?NumericQ}, opts:OptionsPattern[]]:=
+Module[{nextGuessFunc, nextGuess, currentGuesses, workingGuesses, steps=0,
+        tol=OptionValue["Tolerance"], wp=OptionValue["WorkingPrecision"],
+        res, reses={}, workingInvJacobian, nextInvJacFunc, inDers},
+
+    currentGuesses=workingGuesses=SetPrecision[{guess1,guess2},wp];
+
+    (*Find initial Jacobian*)
+    (*workingInvJacobian = Module[{
+        deltaX = Subtract@@workingGuesses, 
+        deltaF = Subtract@@(func@@@workingGuesses)},
+
+        Outer[Divide, deltaX, deltaF]
+        ];*)
+    workingInvJacobian=Module[
+        {inDers=IdentityMatrix[Length[guess1]],f0,fd,partialX,h=10^(-10)},
+
+            f0 = func@@guess1;
+            Table[
+                fd = func@@(guess1+h*inDer); (fd-f0)/h
+            ,{inDer,inDers}]
+        ];
+
+    (*Define next step functions the Jacobian and for the guesses*)
+    nextInvJacFunc[{xm2_, xm1_}, Jim1_] := Module[{
+            deltaX = xm1-xm2, 
+            deltaF = (func@@xm1) - (func@@xm2)},
+            
+            Jim1 + (1/Dot[deltaX,Jim1,deltaF])*
+                    TensorProduct[deltaX - Dot[Jim1,deltaF], 
+                                  Dot[deltaX,Jim1]]
+        ];
+
+    nextGuessFunc[xm1_, Jim1_] := xm1 - Dot[Jim1,func@@xm1];
+
+    res=Infinity;
+    While[res>tol && steps<100,
+        workingInvJacobian = nextInvJacFunc[workingGuesses,workingInvJacobian];
+        workingGuesses = {
+                          Last[workingGuesses], (*the next x in now the old x*)
+                          nextGuessFunc[ (*update the new guess*)
+                            Last[workingGuesses], 
+                            workingInvJacobian
+                          ]
+                         };
+
+        nextGuess=Last[workingGuesses];
+
+        AppendTo[currentGuesses, nextGuess];
+        
+        res=Norm@Apply[Subtract]@workingGuesses;
+        AppendTo[reses,res];
+
+        steps++;
+    ];
+
+    SetPrecision[Last[workingGuesses],-1-Log10[tol]]
+]
+
 (*End of Package*)
 
 Scan[SetAttributes[#, {Protected, ReadProtected}]&,
