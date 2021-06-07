@@ -7,13 +7,13 @@ ClearAll["QNMEigenSolver`*", "QNMEigenSolver`Private`*"];
 
 (* Begin Documentation/Declaration - I recommend to edit documentation via the GUI if possible.*)
 
-eommatform::usage="eommatform[regularEOMs, gridOrder, {field_1,field_2,...}, radialCoordinate, gridDiscretizeFunction, derivativeDiscretizeFunction] discretizes a list of regular equations of motion, regularEOMs, at gridOrder. The fields and radial coordinates must be supplied. You have to supply your own grid dicretization scheme. The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).The derivativeDiscretizeFunction[gridOrder_PositiveInteger, derivativeOrder_NonNegative] -> ((gridOrder+1) by (gridOrder+1) derivative matrix).";
+eommatform::usage="eommatform[{regeom_1,regeom_2,...}, gridOrder, {field_1,field_2,...}, radialCoordinate, gridDiscretizeFunction, derivativeDiscretizeFunction] discretizes a list of regular equations of motion, regularEOMs, at gridOrder. The fields and radial coordinates must be supplied. You have to supply your own grid dicretization scheme. The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).The derivativeDiscretizeFunction[gridOrder_PositiveInteger, derivativeOrder_NonNegative] -> ((gridOrder+1) by (gridOrder+1) derivative matrix).";
 eommatform::usage::Japanese="eommatform[regularEOMs, gridOrder, {field_1,field_2,...}, radialCoordinate, gridDiscretizeFunction, derivativeDiscretizeFunction] discretizes a list of regular equations of motion, regularEOMs, at gridOrder. 
 The fields and radial coordinates must be supplied. You have to supply your own grid dicretization scheme. 
 The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).
 The derivativeDiscretizeFunction[gridOrder_PositiveInteger, derivativeOrder_NonNegative] -> ((gridOrder+1) by (gridOrder+1) derivative matrix).";
 
-alphabetamat::usage="alphabetamat[regularEOMs, gridOrder, {field_1,field_2,...}, radialCoordinate, frequency, gridDiscretizeFunction, derivativeDiscretizeFunction] convertes a list of regular equations of motion to a generlized eigenvalue problem. It return a 2 length list of two matrices, {A,B} that represents the generalized eigenvalue problem Av=wBv for where w (the frequency) is the eigenvalue and v is the eigenvector. You have to supply your own grid dicretization scheme. The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).The derivativeDiscretizeFunction[gridOrder_PositiveInteger, derivativeOrder_NonNegative] -> ((gridOrder+1) by (gridOrder+1) derivative matrix).";
+alphabetamat::usage="alphabetamat[{regeom_1,regeom_2,...}, gridOrder, {field_1,field_2,...}, radialCoordinate, frequency, gridDiscretizeFunction, derivativeDiscretizeFunction] convertes a list of regular equations of motion to a generlized eigenvalue problem. It return a 2 length list of two matrices, {A,B} that represents the generalized eigenvalue problem Av=wBv for where w (the frequency) is the eigenvalue and v is the eigenvector. You have to supply your own grid dicretization scheme. The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).The derivativeDiscretizeFunction[gridOrder_PositiveInteger, derivativeOrder_NonNegative] -> ((gridOrder+1) by (gridOrder+1) derivative matrix).";
 alphabetamat::usage::Japanese="alphabetamat[regularEOMs, gridOrder, {field_1,field_2,...}, radialCoordinate, frequency, gridDiscretizeFunction, derivativeDiscretizeFunction] convertes a list of regular equations of motion to a generlized eigenvalue problem. It return a 2 length list of two matrices, {A,B} that represents the generalized eigenvalue problem Av=wBv for where w (the frequency) is the eigenvalue and v is the eigenvector. 
 You have to supply your own grid dicretization scheme. 
 The gridDiscretizeFunction[gridOrder_PositiveInteger] -> (list of numbers of gridOrder+1).
@@ -27,9 +27,17 @@ modespseudo[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the
 modespseudo::usage::Japanese="modespseudo[{A,B}] returns all the eigenvalues from the generlized eigenvalue problem represented by {A,B}.
 modespseudo[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the generlized eigenvalue problems represented by {{A_1,B_1},{A_2,B_2},{A_3,B_3}...}. The convergent modes are kept according to \"convergenceTolerance\"(default 10^-6).";
 
+eomToRootFunction::usage="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
+eomToRootFunction::usage::Japanese="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
+
+findQNMsParamSeedK::usage="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.
+The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
+findQNMsParamSeedK::usage::Japanese="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.
+The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
+
 Begin["`Private`"];
 (*Options for Functions*)
-$OPTIONS = {WorkingPrecision->MachinePrecision, "bounds"-> {0,1},"boundaryvanish"->True,"horizonvanish"->False, "convergenceTolerance"->10^-6};
+$OPTIONS = {WorkingPrecision->MachinePrecision, "bounds"-> {0,1},"boundaryvanish"->True,"horizonvanish"->False, "convergenceTolerance"->10^-6, Tolerance->10^-10};
 
 (*Help Functions*)
 coefficientToMatrix[coef_,radialCoord_Symbol,grid_List] := DiagonalMatrix@Table[(coef/.{radialCoord -> gridpoint}),{gridpoint,grid}]
@@ -177,6 +185,31 @@ Module[{relativeError,tol=OptionValue["convergenceTolerance"]},
 				Nothing
 				],
 	{qnm,modesSet1}]
+]
+
+Options[eomToRootFunction]=$OPTIONS;
+eomToRootFunction[eoms:{__}, gridOrder_, fields:{__}, radialCoord_, freq_,momentum_ ,gridF_, derF_,opts:OptionsPattern[]]:=Module[
+{rhs,eomMat, wp=OptionValue[WorkingPrecision]},
+
+eomMat = eommatform[eoms, gridOrder, fields, radialCoord, gridF, derF,opts];
+eomMat[[1]] =First@ derF[gridOrder,0,opts];
+rhs=First@derF[gridOrder,0,opts];
+Function[{x,y},Last@LinearSolve[eomMat/.{freq->x,momentum->y},rhs]]
+];
+
+Options[findQNMsParamSeedK]= $OPTIONS;
+findQNMsParamSeedK[seedMode_,QNMF_,kF_,xP:{xS__},secantMethod_,opts:OptionsPattern[]]:=Module[{kNext,qnm,nextWGuess,kAtParam,yy},
+
+kAtParam = {seedMode};
+
+Do[
+	nextWGuess= Last@Last[kAtParam];(*Can make this smarter*)
+	kNext = kF[yy];
+	qnm=secantMethod[(QNMF[#,kNext]&),nextWGuess,nextWGuess+(1+1)I 10^(-5),opts];
+	AppendTo[kAtParam,{kNext,qnm}]
+,{yy,xS}];
+
+kAtParam
 ]
 
 (*End of Package*)
