@@ -192,7 +192,7 @@ eomToRootFunction[eoms:{__}, gridOrder_, fields:{__}, radialCoord_, freq_,moment
 {rhs,eomMat, wp=OptionValue[WorkingPrecision]},
 
 eomMat = eommatform[eoms, gridOrder, fields, radialCoord, gridF, derF,opts];
-eomMat[[1]] =First@ derF[gridOrder,0,opts];
+eomMat[[1]] =First@derF[gridOrder,0,opts];
 rhs=First@derF[gridOrder,0,opts];
 Function[{x,y},Last@LinearSolve[eomMat/.{freq->x,momentum->y},rhs]]
 ];
@@ -205,7 +205,7 @@ kAtParam = {seedMode};
 Do[
 	nextWGuess= Last@Last[kAtParam];(*Can make this smarter*)
 	kNext = kF[yy];
-	qnm=secantMethod[(QNMF[#,kNext]&),nextWGuess,nextWGuess+(1+1)I 10^(-5),opts];
+	qnm=secantMethod[(QNMF[#,kNext]&),nextWGuess,nextWGuess+(1+1)I 10^(-3),opts];
 	AppendTo[kAtParam,{kNext,qnm}]
 ,{yy,xS}];
 
