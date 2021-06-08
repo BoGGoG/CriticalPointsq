@@ -194,7 +194,7 @@ eomToRootFunction[eoms:{__}, gridOrder_, fields:{__}, radialCoord_, freq_,moment
 eomMat = eommatform[eoms, gridOrder, fields, radialCoord, gridF, derF,opts];
 eomMat[[1]] =First@derF[gridOrder,0,opts];
 rhs=First@derF[gridOrder,0,opts];
-Function[{x,y},Last@LinearSolve[eomMat/.{freq->x,momentum->y},rhs]]
+Function[{x,y},Last@LinearSolve[eomMat/.{freq->x,momentum->y},Evaluate@rhs]]
 ];
 
 Options[findQNMsParamSeedK]= $OPTIONS;
