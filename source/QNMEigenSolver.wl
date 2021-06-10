@@ -30,10 +30,8 @@ modespseudo[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the
 eomToRootFunction::usage="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
 eomToRootFunction::usage::Japanese="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
 
-findQNMsParamSeedK::usage="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.
-The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
-findQNMsParamSeedK::usage::Japanese="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.
-The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
+findQNMsParamSeedK::usage="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.  The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
+findQNMsParamSeedK::usage::Japanese="findQNMsParamSeedK[seedMode,QNMRootFunc,kFunction,{t_0,t_f,dt},secantMethodFunc] this finds QNMs starting with with guesses parameterized by kFunction where t is the parameter. kFunction sets k, the momentum.  The secantMethodFunc must be provided for where it uses secant method. An example of this is in the RootFidning...wl file.";
 
 Begin["`Private`"];
 (*Options for Functions*)
@@ -198,7 +196,7 @@ Function[{x,y},Last@LinearSolve[eomMat/.{freq->x,momentum->y},Evaluate@rhs]]
 ];
 
 Options[findQNMsParamSeedK]= $OPTIONS;
-findQNMsParamSeedK[seedMode_,QNMF_,kF_,xP:{xS__},secantMethod_,opts:OptionsPattern[]]:=Module[{kNext,qnm,nextWGuess,kAtParam,yy},
+findQNMsParamSeedK[seedMode_:{__},QNMF_,kF_,xP:{xS__},secantMethod_,opts:OptionsPattern[]]:=Module[{kNext,qnm,nextWGuess,kAtParam,yy},
 
 kAtParam = {seedMode};
 
