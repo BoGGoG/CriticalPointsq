@@ -28,8 +28,9 @@ seedGridOrderLower=40;
 seedGridOrderHigher=42;
 trunkBranchGridOrder=70;
 tol=10^(-5)
-
+maxRootModes=4;
 kabsMax=3;
+
 trunkAbsKsqr=Subdivide[0,kabsMax,kabsMax*5];
 trunkArgKsqr=Subdivide[0,4\[Pi],200];
 
@@ -58,7 +59,7 @@ seedModeAlphaBeta = funcTable[alphabetamat,
 {gp,seedGridOrderLower,seedGridOrderHigher}
 ];
 
-seedModes = (Take[#, UpTo[4]] &)@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
+seedModes = (Take[#, UpTo[maxRootModes]] &)@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
 
 Print["Found the seed modes of "<> eomName];
 
