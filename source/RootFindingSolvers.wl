@@ -7,7 +7,7 @@ ClearAll["RootFindingSolvers`*", "RootFindingSolvers`Private`*"];
 
 (* Begin Documentation/Declaration - I recommend to edit documentation via the GUI if possible.*)
 
-secantRootFind::usage="secantRootFind[f, {{x_1,x_2,...}, {y_1, y_2,...}}] finds the roots f (f(0) = 0 using the Secant method."
+secantRootFind::usage="secantRootFind[f, {{x_1,x_2,...}, {y_1, y_2,...}}] finds the roots f (f(0) = 0 using the Secant method. Vector -> Vector problems the dimensions of the domain and image must be the same."
 
 Begin["`Private`"];
 (*Options for Functions*)
