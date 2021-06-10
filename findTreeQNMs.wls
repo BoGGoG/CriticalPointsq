@@ -59,7 +59,7 @@ seedModeAlphaBeta = funcTable[alphabetamat,
 {gp,seedGridOrderLower,seedGridOrderHigher}
 ];
 
-seedModes = (Take[#, UpTo[maxRootModes]] &)@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
+seedModes = DeleteDuplicatesBy[Round[#, 1/10] &]@(Take[#, UpTo[maxRootModes]] &)@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
 
 Print["Found the seed modes of "<> eomName];
 
