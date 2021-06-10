@@ -26,7 +26,7 @@ eom=eom/.{k->Sqrt[ksqr]};(*Using k^2 as the variable instead of k.*)
 wp=4*MachinePrecision;
 seedGridOrderLower=40;
 seedGridOrderHigher=42;
-trunkBranchGridOrder=70;
+trunkBranchGridOrder=80;
 tol=10^(-5)
 maxRootModes=4;
 kabsMax=3;
@@ -59,7 +59,7 @@ seedModeAlphaBeta = funcTable[alphabetamat,
 {gp,seedGridOrderLower,seedGridOrderHigher}
 ];
 
-seedModes = DeleteDuplicatesBy[Round[#, 1/10] &]@(Take[#, UpTo[maxRootModes]] &)@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
+seedModes = (Take[#, UpTo[maxRootModes]] &)@DeleteDuplicatesBy[Round[#, 1/10] &]@SortBy[Abs@*Last]@Map[{0,#}&]@modespseudo[seedModeAlphaBeta];
 
 Print["Found the seed modes of "<> eomName];
 
