@@ -27,6 +27,8 @@ modespseudo[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the
 modespseudo::usage::Japanese="modespseudo[{A,B}] returns all the eigenvalues from the generlized eigenvalue problem represented by {A,B}.
 modespseudo[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the generlized eigenvalue problems represented by {{A_1,B_1},{A_2,B_2},{A_3,B_3}...}. The convergent modes are kept according to \"convergenceTolerance\"(default 10^-6).";
 
+modespseudoList::usage="modespseudoList[{{A_1,B_1},{A_2,B_2},{A_3,B_3}...}] returns the eigenvalues from the generlized eigenvalue problems represented by {{A_1,B_1},{A_2,B_2},{A_3,B_3}...}. The convergent modes are kept according to"
+
 eomToRootFunction::usage="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
 eomToRootFunction::usage::Japanese="eomToRootFunction[{regeom_1,regeom_2,...}, gridOrder, {field_1, field_2, ...}, radialCoord, frequencySymbol, momentumSymbol, gridFunc, derivativeFund]= Constructs a root functions for Regular EOMs given. This root function, F(w,k), is formated such that if w is a qnm than F=0. w is the frequency and k is the momentum.";
 
@@ -152,11 +154,25 @@ Options[modespseudo]=$OPTIONS;
 SyntaxInformation[modespseudo]={"ArgumentsPattern"->{_,OptionsPattern[]},
 								"ArgumentsPattern"->{{__},OptionsPattern[]}};
 
-aBMatQ = (If[Head[#]===List && Length[#]==2 && (MatrixQ@*First)[#] && (MatrixQ@*Last)[#] && (And@@(NumericQ/@Flatten[#])),True,False])&
+aBMatQ = (
+	((Head[#]===List && Length[#]==2 && (MatrixQ@*First)[#] && (MatrixQ@*Last)[#])
+	|| MatrixQ[#])
+	)&
 
 modespseudo[abMat_?aBMatQ, opts:OptionsPattern[]]:=Eigenvalues[abMat]
 
-modespseudo[abMatList:{abMats__?aBMatQ}, opts:OptionsPattern[]]:=
+(*modespseudo[abMatList:{__?aBMatQ}, opts:OptionsPattern[]]:=
+Module[{modesList,filterFunc},
+
+modesList = Table[modespseudo[abMat],{abMat, abMatList}];
+
+filterFunc=convergentfilter[#1,#2,opts]&;
+
+Fold[filterFunc, modesList]
+]*)
+
+Options[modespseudoList]=$OPTIONS;
+modespseudoList[abMatList_, opts:OptionsPattern[]]:=
 Module[{modesList,filterFunc},
 
 modesList = Table[modespseudo[abMat],{abMat, abMatList}];
