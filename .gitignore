@@ -1,5 +1,6 @@
-#data should not be shared
+#data and graphics should not be shared
 data/
+graphics/
 # test.nb is just for testing code
 test.nb
 
