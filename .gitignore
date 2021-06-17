@@ -1,7 +1,7 @@
+#data should not be shared
+data/
 # test.nb is just for testing code
 test.nb
-# test.csv is for storing "test" data
-test.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
