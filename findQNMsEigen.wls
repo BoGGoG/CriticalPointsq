@@ -58,7 +58,7 @@ Print["Could name read out a symbol for the eom. Quitting..."]; usage[]; Quit[]]
 
 eomName=ToString[argv[[1]]];
 If[Head[eom]==Symbol,Print["There is no eom with the name: "<>eomName<>". Quitting..."]; usage[]; Quit[]];
-eom=eom/.{k->Sqrt[ksqrA*Exp[ksqrTh]]};(*Using k^2 as the variable instead of k.*)
+eom=eom/.{k->Sqrt[ksqrA*Exp[I*ksqrTh]]};(*Using k^2 as the variable instead of k.*)
 
 setTime=((Set[time,First[#]];Last[#])&)
 
