@@ -113,7 +113,8 @@ fileWp=Round@N[wp/MachinePrecision]//ToString; (*wp inputted as units of Machine
 filegridLower=gridLower//Round//ToString;
 filegridHigher=gridHigher//Round//ToString;
 filetol=-Log10[tol]//Round//ToString;
-filekAbsMax=kabsMax//Round//ToString;
+filekAbsMax=Max[absKsqr]//Round//ToString;
+filekAbsMin=Min[absKsqr]//Round//ToString;
 fileAbsDiv=(Length@absKsqr-1)//ToString;
 fileArgsDiv=(Length@argKsqr-1)//ToString;
 
@@ -122,6 +123,7 @@ fileName=fileName<>"-"<>fileWp<>"wp";
 fileName=fileName<>"-"<>filegridLower<>"lower";
 fileName=fileName<>"-"<>filegridHigher<>"higher";
 fileName=fileName<>"-"<>filekAbsMax<>"absmax";
+fileName=fileName<>"-"<>filekAbsMin<>"absmin";
 fileName=fileName<>"-"<>fileAbsDiv<>"absDiv";
 fileName=fileName<>"-"<>fileArgsDiv<>"argDiv";
 
